@@ -4,6 +4,7 @@ from jax.tree_util import Partial
 from prior import mixture_prior, mixture_prior_pdf
 from pdf_utils import pdf_normal, expected_pdf_at_time_t
 from plotting import plot
+from SDE import SDE
 import numpy as np
 
 """
@@ -17,12 +18,15 @@ With u and s defined as followed:
 ## This case is defined as dX(t) = dWt
 
 @jit
-def u(t, xt):
+def u_bm(t, xt):
     return -0.5 * xt
 
 @jit
-def s(t, xt):
+def s_bm(t, xt):
     return 1
+
+@jit
+
 
 """
 t : at time t
@@ -38,8 +42,6 @@ def p_xt_given_x0s(t, x0s, xt):
 ## Number of samples
 num_samples = 2 * 10 ** 4
 
-## Sample rate and range
-timesteps_per_second = 5 * (10 ** 2)
 time_range = 10
 
 ## Prior distribution is a mixture of Gaussians:
@@ -50,6 +52,8 @@ prior_variance = jnp.array([1., 1.])
 ## Generate the initial X0 samples from the Gaussian mixture
 prior_sample = mixture_prior(prior_weight, prior_means, prior_variance, num_samples)
 
+sde_bm = SDE(prior_sample, num_samples = 2 * 10 ** 4, dt = 500, u, s, expected_pdf)
+
 ## Xt values to consider in plotting pdf
 xs = np.linspace(-10, 10, num=200)
 
@@ -58,7 +62,6 @@ prior_pdf_partial = Partial(mixture_prior_pdf, ws=prior_weight, us=prior_means, 
 prior_pdf = prior_pdf_partial(x0=xs)
 
 ## Perform the discretisation of the forward time step
-samples_at_t = np.zeros((num_samples, time_range * timesteps_per_second))
 ts = np.linspace(start=0, stop=time_range, num=time_range * timesteps_per_second)
 samples_at_t[:, 0] = prior_sample
 ts[0] = 0

@@ -13,12 +13,12 @@ n number of samples to generate
 Returns: n samples from the gaussian mixture defined by inputs
 """
 
-def mixture_prior(ws, us, vs, n : int):
+def mixture_prior(ws, us, vs, num_samples : int):
     ## Third case checked by transitivity
     assert (np.size(ws) == np.size(us))
     assert (np.size(us) == np.size(vs))
     distributions : int = np.size(ws)
-    chosens = jnp.array(np.random.choice(distributions, n, p=ws))
+    chosens = jnp.array(np.random.choice(distributions, num_samples, p=ws))
     return jnp.array([ np.random.normal(loc = us[chosen], scale = vs[chosen]) for chosen in chosens])
 
 """
