@@ -29,14 +29,14 @@ def s_bm(t, xt):
     return 1
 
 ## Prior distribution is a mixture of Gaussians:
-prior_weight = jnp.array([0.3, 0.7])
+prior_weight = jnp.array([0.5, 0.5])
 prior_means = jnp.array([-5., 5.])
 prior_variance = jnp.array([1., 1.])
 
 """
 Expected pdf P(X(t) = xt) at time t
 """
-def expected_pdf(xt, t):
+def expected_pdf(t, xt):
     total = 0
     for i in range(np.size(prior_weight)):
         total += prior_weight[i] * pdf_normal(mean=prior_means[i], var=prior_variance[i] + t, x=xt)
@@ -56,6 +56,11 @@ ts = sde_bm.ts
 
 partial_expected_pdf_at_time_t = Partial(expected_pdf, xs_for_pdf)
 
-pdf_at_time_t =  [[ expected_pdf(x, t) for x in xs_for_pdf] for t in ts[1:]]
+pdf_at_time_t = np.zeros((np.size(ts), 2000))
 
-plot(sde_bm.ts, sde_bm.samples, xs_for_pdf, pdf_at_time_t, num_samples, sde_bm.dt, T)
+for i in range(np.size(ts)):
+    t = ts[i]
+    partial = Partial(expected_pdf, t)
+    pdf_at_time_t[i, :] = partial(xs_for_pdf)
+
+plot(sde_bm.ts, sde_bm.samples, xs_for_pdf, pdf_at_time_t, np.size(sde_bm.samples[:, 0]), int (1. / sde_bm.dt), T)

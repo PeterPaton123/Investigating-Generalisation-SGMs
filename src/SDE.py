@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from jax import jit
+import jax
 import jax.numpy as jnp
 from prior import mixture_prior
 import numpy as np
@@ -36,7 +37,7 @@ class SDE():
         uPartial = Partial(self.u, t)
         sPartial = Partial(self.s, t)
         brownian_motion_samples = np.random.normal(loc = 0, scale = np.sqrt(self.dt), size=np.size(prevXs))
-        samples_at_t_plus_dt = prevXs + self.dt * uPartial(prevXs) + np.multiply(brownian_motion_samples, sPartial(prevXs))
+        samples_at_t_plus_dt = prevXs + self.dt * jax.vmap(uPartial)(prevXs) + np.multiply(brownian_motion_samples, sPartial(prevXs))
         self.samples = np.column_stack((self.samples, samples_at_t_plus_dt))
         self.ts = np.append(self.ts, t)
         self.T += self.dt
@@ -44,4 +45,5 @@ class SDE():
     def step_up_to_T(self, T : float):
         t0 = self.T
         for i in range(0, (int) ((T - t0) / self.dt)):
+            print(i)
             self.step_euler_maruyama()
