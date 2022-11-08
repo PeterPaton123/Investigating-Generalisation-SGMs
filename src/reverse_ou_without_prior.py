@@ -8,8 +8,6 @@ from jax.tree_util import Partial
 from plotting import plot
 from pdf_utils import pdf_normal
 from SDE import SDE
-from wasserstein_distance import ws_dist_two_samples
-import matplotlib.pyplot as plt
 
 """
 Numerical solution of the following Stochastic differential equation:
@@ -26,27 +24,32 @@ prior_weight = jnp.array([0.5, 0.5])
 prior_means = jnp.array([-5., 5.])
 prior_variance = jnp.array([1., 1.])
 
+## Generate the initial X0 samples from the Gaussian miyture
+prior_sample = mixture_prior(jnp.array([1.]), jnp.array([0.]), jnp.array([1.]), num_samples = 2 * 10 ** 3)
+
+"""
+P(Xt = xt | X0 = x0)
+"""
+def p_xt_given_x0(t, xt, x0):
+    total = 0.0
+    for i in range(np.size(prior_weight)):
+        total += prior_weight[i] * pdf_normal(x0 * jnp.exp(-0.5 * (T-t)), var= 1 - np.exp(-(T-t)), x=xt)        
+    return total
+
 """
 Expected pdf P(X(t) = yt) at time t
 """
-@jit
-def expected_pdf(t, yt):
-    total = 0.0
-    for i in range(np.size(prior_weight)):
-        total += prior_weight[i] * pdf_normal(mean=prior_means[i] * jnp.exp(-0.5 * (T-t)), var=(prior_variance[i] - 1.) * jnp.exp(-(T-t)) + 1., x=yt)
-    return total
+def expected_pdf_from_samples(samples, t, yt):
+    partial = Partial(p_xt_given_x0, t, yt)
+    return jnp.mean(jax.vmap(partial)(samples))
 
-@jit
 def u_ou(t, yt):
-    pdf_at_time_t = Partial(expected_pdf, t)
+    pdf_at_time_t = Partial(expected_pdf_from_samples, prior_sample, t)
     return 0.5 * yt + (jax.grad(pdf_at_time_t)(yt))/(pdf_at_time_t(yt))
 
 @jit
 def s_ou(t, yt):
     return 1
-
-## Generate the initial X0 samples from the Gaussian miyture
-prior_sample = mixture_prior(jnp.array([1.]), jnp.array([0.]), jnp.array([1.]), num_samples = 2 * 10 ** 4)
 
 ## Construct the stochastic differential equation
 sde_ou = SDE(prior_sample, dt = 1. / 100, u=u_ou, s=s_ou)
@@ -61,18 +64,7 @@ pdf_at_time_t = np.zeros((jnp.size(ts), 2000))
 
 for i in range(jnp.size(ts)):
     t = ts[i]
-    partial = Partial(expected_pdf, t)
+    partial = Partial(expected_pdf_from_samples, prior_sample, t)
     pdf_at_time_t[i, :] = jax.vmap(partial)(xs_for_pdf)
 
-#plot(sde_ou.ts, sde_ou.samples, xs_for_pdf, pdf_at_time_t, jnp.size(sde_ou.samples[:, 0]), int (1. / sde_ou.dt), T)
-
-prior_to_approx = mixture_prior(jnp.array([0.5, 0.5]), jnp.array([-5., 5.]), jnp.array([1., 1.]), num_samples = 2 * 10 ** 4)
-
-
-xs = np.linspace(0, 10, num=50, dtype=int)
-ys = [ws_dist_two_samples(sde_ou.samples[:, x * 100], prior_to_approx) for x in xs]
-
-plt.plot(xs, ys, color = 'r', linestyle='-')
-plt.xlabel("Time t")
-plt.ylabel("Wasserstein distance")
-plt.show()
+plot(sde_ou.ts, sde_ou.samples, xs_for_pdf, pdf_at_time_t, jnp.size(sde_ou.samples[:, 0]), int (1. / sde_ou.dt), T)
