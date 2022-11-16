@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from jax import jit
 import jax.numpy as jnp
 from prior import mixture_prior
@@ -7,8 +6,9 @@ from jax.tree_util import Partial
 from plotting import plot
 from pdf_utils import pdf_normal
 from SDE import SDE
+from wasserstein_distance import ws_dist_normal
 
-"""z
+"""
 Numerical solution of the following Stochastic differential equation:
 dX = u(X(t), t) dt + s(X(t), t) * dWt
 
@@ -18,7 +18,7 @@ With u and s defined as followed:
 
 T = 10
 
-## This case is defined as dX(t) = -0.5dt + dWt
+## This case is defined as dX(t) = -0.5xdt + dWt
 
 @jit
 def u_ou(t, xt):
@@ -64,3 +64,5 @@ for i in range(np.size(ts)):
     pdf_at_time_t[i, :] = partial(xs_for_pdf)
 
 plot(sde_ou.ts, sde_ou.samples, xs_for_pdf, pdf_at_time_t, np.size(sde_ou.samples[:, 0]), int (1. / sde_ou.dt), T)
+
+print(ws_dist_normal(sde_ou.samples[:, -1], 0, 1))

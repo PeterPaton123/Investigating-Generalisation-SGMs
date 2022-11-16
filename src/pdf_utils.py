@@ -1,9 +1,6 @@
-import numpy as np
-from copy import copy
 import jax.numpy as jnp
+import numpy as np
 from jax.tree_util import Partial
-from matplotlib.colors import LogNorm
-import matplotlib.pyplot as plt
 
 """
 Calculates the probability X(t) = x for each of the xs in the input array
@@ -28,4 +25,8 @@ Probability density at a point X from a normal distribution mean mean, variance 
 """
 def pdf_normal(mean, var, x):
     sd = jnp.sqrt(var)
-    return 1. / (sd * jnp.sqrt(2 * jnp.pi)) * jnp.exp (-((x - mean) ** 2 / (2 * var)))
+    return jnp.exp (-((x - mean) ** 2 / (2 * var))) / (sd * jnp.sqrt(2 * jnp.pi))
+
+def pdf_log_normal(mean, var, x):
+    sd = jnp.sqrt(var)
+    return 1. / (jnp.log(x) * sd * jnp.sqrt(2 * jnp.pi)) * jnp.exp (-((jnp.log(x) - mean) ** 2 / (2 * var)))

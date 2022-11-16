@@ -1,11 +1,11 @@
-from abc import abstractmethod
-from jax import jit
 import jax.numpy as jnp
-from prior import mixture_prior
 import numpy as np
+from jax import jit
 from jax.tree_util import Partial
-from plotting import plot
+
 from pdf_utils import pdf_normal
+from plotting import plot
+from prior import mixture_prior
 from SDE import SDE
 
 """
@@ -43,7 +43,12 @@ def expected_pdf(t, xt):
     return total
 
 ## Generate the initial X0 samples from the Gaussian mixture
-prior_sample = mixture_prior(prior_weight, prior_means, prior_variance, num_samples = 2 * 10 ** 4)
+prior_sample = mixture_prior(
+    prior_weight,
+    prior_means,
+    prior_variance, 
+    num_samples=2 * 10**4,
+)
 
 ## Construct the stochastic differential equation
 sde_bm = SDE(prior_sample, dt = 1. / 100, u=u_bm, s=s_bm)
@@ -63,4 +68,4 @@ for i in range(np.size(ts)):
     partial = Partial(expected_pdf, t)
     pdf_at_time_t[i, :] = partial(xs_for_pdf)
 
-plot(sde_bm.ts, sde_bm.samples, xs_for_pdf, pdf_at_time_t, np.size(sde_bm.samples[:, 0]), int (1. / sde_bm.dt), T)
+plot(sde_bm.ts, sde_bm.samples, xs_for_pdf, pdf_at_time_t, np.size(sde_bm.samples[:, 0]), int(1. / sde_bm.dt), T)
