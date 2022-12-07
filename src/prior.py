@@ -13,7 +13,7 @@ n number of samples to generate
 Returns: n samples from the gaussian mixture defined by inputs
 """
 
-def mixture_prior(ws, us, vs, num_samples: int):
+def mixture_prior(ws, us, vs, num_samples):
     ## Third case checked by transitivity
     assert (np.size(ws) == np.size(us))
     assert (np.size(us) == np.size(vs))

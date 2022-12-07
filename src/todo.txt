@@ -8,9 +8,6 @@ Monte carlo sampling for neural network not [-10, 10] linspace
 Look why the Bts work, scaling coefficient of xt with time
 Interacting SDE forward pass and try to derive the marginal pdf in backwards pass analytically, then implement
 
-
-
-
 VAE
 GAN
 energy based models
@@ -23,9 +20,25 @@ interacting SDEs for forward and backward pass (McLean Vlasov SDE)
 
 Todo:
 
-Formalise the derivation of the interacting SDEs
+Verify the 
+Verify pdf with plotting and histograms
+Use neural network for score function in interacting case
+Train on departmental GPUs
+
+
+What is the idea behind interacting SDEs?
+What is a diffusion model
+
+Look at the Fokker Planke equation and relate it to Ornstein Ulhenbeck
+
+Formalise the (matrix) derivation of the interacting SDEs
 Gain an analytic solution to the multivariate Ornstein Ulhenbeck process
 (If conditionals just use the fact that co variance in the initial samples is 0 except along the diagonal which is the variance of our mixture)
+Use this analytic solution to solve the interacting SDE
+
+Perhaps move on to the Bt case, and do some hyper parameter optimisation?
+
+Catch-up:
 
 Implement the forward pass of multivariate with n samples interferring
 Compare the Milstein distance in t with the interferring and non-interferring case
