@@ -30,3 +30,29 @@ def ws_dist_normal_mixture(samples, ws, ms, vs):
     if (not np.isfinite(a)):
         print("ERROROR 2")
     return a
+
+dists = np.zeros(100)
+
+sample1 = np.linspace(-5, 5, 1000)
+
+for i in range(100):
+    mu = -2.5 + (i / 20)
+    sample2 = np.linspace(-3 + mu, mu + 3, 1000)
+    dists[i] = scipy.stats.wasserstein_distance(sample1, sample2, u_weights=scipy.stats.norm(loc=0, scale=1).pdf(sample1), v_weights=scipy.stats.norm(loc=mu, scale=1).pdf(sample2))
+
+fig, axs = plt.subplots(1, 2)
+fig.suptitle('Wasserstein distance between moving normal distributions')
+
+y1=scipy.stats.norm(loc=0, scale=1).pdf(sample1)
+y2=scipy.stats.norm(loc=-1, scale=1).pdf(sample1)
+axs[0].fill_between(sample1, y1, 0, where=y1>0, color='b', alpha=0.5, label='Fixed distribution')
+axs[0].fill_between(sample1, y2, 0, where=y2>0, color='r', alpha=0.5, label='Moving mean')
+axs[0].plot([-2.5, -2.5], [0, 0.4], linewidth=1.5, linestyle='--', color='k')
+axs[0].plot([2.5, 2.5], [0, 0.4], linewidth=1.5, linestyle='--', color='k')
+axs[0].scatter([-1], [scipy.stats.norm.pdf(loc=-1, scale=1, x=-1)], color='r')
+axs[0].legend(loc='upper right')
+axs[1].plot(np.linspace(-2.5, 2.45, num=100), dists)
+axs[1].plot([-2.5, -2.5], [0, 2.5], linewidth=1.5, linestyle='--', color='k')
+axs[1].plot([2.5, 2.5], [0, 2.5], linewidth=1.5, linestyle='--', color='k')
+
+plt.show()
