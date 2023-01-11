@@ -53,7 +53,7 @@ sde_ou = SDE(prior_sample, dt = 1. / 100, u=u_ou, s=s_ou)
 
 ## Perform a discretisation of the stochastic differential equation
 sde_ou.step_up_to_T(T)
-"""
+
 xs_for_pdf = jnp.linspace(-10, 10, num=2000)
 ts = sde_ou.ts
 
@@ -64,8 +64,7 @@ for i in range(jnp.size(ts)):
     partial = Partial(expected_pdf, t)
     pdf_at_time_t[i, :] = jax.vmap(partial)(xs_for_pdf)
 
-#plot(sde_ou.ts, sde_ou.samples, xs_for_pdf, pdf_at_time_t, jnp.size(sde_ou.samples[:, 0]), int (1. / sde_ou.dt), T)
-"""
+plot(sde_ou.ts, sde_ou.samples, xs_for_pdf, pdf_at_time_t, jnp.size(sde_ou.samples[:, 0]), int (1. / sde_ou.dt), T)
 
 wasserstein_distance_num = int(jnp.shape(sde_ou.ts)[0] / 10)
 

@@ -21,10 +21,12 @@ def plot(ts, samples_at_t, xs, expected_pdf_at_time_t, num_samples, timesteps_pe
     cmap = copy(plt.cm.cividis)
     cmap.set_bad(cmap(0))
     h, xedges, yedges = np.histogram2d(x_fine, y_fine, bins=[800, timesteps_per_second])
-    pcm = axes[1].pcolormesh(xedges, yedges, h.T, cmap=cmap, norm=LogNorm(vmax=1e2), rasterized=True)
+    pcm = axes[1].pcolormesh(xedges, yedges, h.T, cmap=cmap, norm=LogNorm(vmax=5 * 1e3), rasterized=True)
     fig.colorbar(pcm, ax=axes[1], label="# points", pad=0)
     axes[1].set_title("2d histogram and log color scale")
-    axes[1].plot(ts[1:], np.zeros(time_range * timesteps_per_second), color = 'r', linestyle='--')
+    axes[1].plot(ts, samples_at_t[0, :], color='m', alpha=1.0, linewidth=1.0)
+    axes[1].plot(ts, samples_at_t[1, :], color='c', alpha=1.0, linewidth=1.0)
+    axes[1].plot(ts, samples_at_t[2, :], color='r', alpha=1.0, linewidth=1.0)
 
     ## Expected pdf:
     mesh = axes[2].pcolormesh(ts, xs, np.array(expected_pdf_at_time_t).T, cmap=cmap)

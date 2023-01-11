@@ -33,7 +33,7 @@ def f2(v):
     return -(0.5) * (v - mu_2) @ cov_2 @ (v - mu_2).T
 
 def score_fun(v):
-    return jnp.log(jnp.exp(f1(v)) + jnp.exp(f2(v)))
+    return jnp.log(0.1*jnp.exp(f1(v)) + 0.9*jnp.exp(f2(v)))
 
 def grad_score(v):
     return jacfwd(score_fun)(np.reshape(v, (2,)))
@@ -43,7 +43,7 @@ x, y = np.meshgrid(x, x)
 grid = np.stack([x.flatten(), y.flatten()], axis=1)
 scores = vmap(grad_score)(grid)
 
-fig, axs = plt.subplots(2, 2)
+fig, axs = plt.subplots(1, 2)
 
 magnitude = [np.sqrt(x**2 + y**2) for [x, y] in scores] 
 magnitude = [0 if np.isnan(mag) else mag for mag in magnitude]
@@ -54,31 +54,45 @@ cm = plt.cm.Reds
 
 sm = plt.cm.ScalarMappable(cmap=cm, norm=norm)
 
-map_1 = {0: axs[0, 0], 1: axs[0, 1], 2:axs[1, 0], 3:axs[1, 1]}
-
+#map_1 = {0: axs[0, 0], 1: axs[0, 1], 2:axs[1, 0], 3:axs[1, 1]}
+"""
 fig.suptitle('Langevin dynamics')
 for i in range(4):
     map_1[i].set_title("T = " + str(i * 0.25))
     map_1[i].quiver(grid[:, 0], grid[:, 1], scores[:, 0], scores[:, 1], color=cm(norm(magnitude)))
     map_1[i].scatter([-5, 5], [-5, 5], color='r')
-
-#fig.colorbar(sm, label = "Magnitude of the grad modelled score function")
 """
+#fig.colorbar(sm, label = "Magnitude of the grad modelled score function")
+
 axs[0].quiver(grid[:, 0], grid[:, 1], scores[:, 0], scores[:, 1], color=cm(norm(magnitude)))
 axs[0].scatter([-5, 5], [-5, 5], color='r')
 
 axs[1].quiver(grid[:, 0], grid[:, 1], scores[:, 0], scores[:, 1], color=cm(norm(magnitude)))
 axs[1].scatter([-5, 5], [-5, 5], color='r')
-"""
+
 samples = np.resize(np.random.uniform(-7, 7, size=100), (2, 50))
+samples_less = np.array([[x, y] for [x, y] in samples.T if x < -y]).T
+samples_more = np.array([[x, y] for [x, y] in samples.T if x >= -y]).T
 
 T = 752
 dt = 0.003
-
+"""
 for t in range(T-1):
     samples += vmap(grad_score)(samples.T).T * dt + np.sqrt(dt * 2) * np.resize(np.random.normal(loc=0, scale=1, size=100), (2, 50))
     if (t % 250 == 0):
         map_1[int(t / 250)].scatter(samples[0, :], samples[1, :], color="royalblue", marker=".", s=10)
+"""
+
+axs[0].scatter(samples_less[0, :], samples_less[1, :], color="royalblue", marker=".", s=30)
+axs[0].scatter(samples_more[0, :], samples_more[1, :], color="purple", marker=".", s=30)
+
+for t in range(T-1):
+    samples_less += vmap(grad_score)(samples_less.T).T * dt + np.sqrt(dt * 2) * np.resize(np.random.normal(loc=0, scale=1, size=2 * len(samples_less.T)), np.shape(samples_less))
+    samples_more += vmap(grad_score)(samples_more.T).T * dt + np.sqrt(dt * 2) * np.resize(np.random.normal(loc=0, scale=1, size=2 * len(samples_more.T)), np.shape(samples_more))
+    
+
+axs[1].scatter(samples_less[0, :], samples_less[1, :], color="royalblue", marker=".", s=30)
+axs[1].scatter(samples_more[0, :], samples_more[1, :], color="purple", marker=".", s=30)
 
 plt.show()
 
