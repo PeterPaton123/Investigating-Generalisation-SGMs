@@ -1,0 +1,4 @@
+Denoising diffusion probabilistic modeling (DDPM) (Sohl-Dickstein et al., 2015;
+Ho et al., 2020) trains a sequence of probabilistic models to reverse each step of the noise corruption,
+using knowledge of the functional form of the reverse distributions to make training tractable.
+
