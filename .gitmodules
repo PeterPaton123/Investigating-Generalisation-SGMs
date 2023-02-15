@@ -1,0 +1,3 @@
+[submodule "diffusionjax"]
+	path = diffusionjax
+	url = git@github.com:bb515/diffusionjax.git

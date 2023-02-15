@@ -68,7 +68,7 @@ value_and_grad_fn = jax.value_and_grad(mse_loss)
 # Model training
 for epoch in range(epochs):
     loss, grads = value_and_grad_fn(params)
-    updates, optimiser_state = optimiser.update(-grads, optimiser_state)
+    updates, optimiser_state = optimiser.update(grads, optimiser_state)
     params = optax.apply_updates(params, updates)
     if epoch % 5 == 0:
         print(f'epoch {epoch}, loss = {loss}')
