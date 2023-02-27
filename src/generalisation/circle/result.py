@@ -39,6 +39,6 @@ class Result():
         return self.true[:, 1]
 
     def true_dist(self):
-        return vmap(jnp.sum)(self.simple)
+        return vmap(jnp.sum)(self.true)
 
 

@@ -24,7 +24,7 @@ from diffusionjax.utils import (
     retrain_nn)
 from diffusionjax.sde import OU
 import sys
-sys.path.append('/home/peter/Documents/Year-4/fyp/src/generalisation/')
+sys.path.append('/home/peter/Documents/Year-4/fyp/Numerical-methods-for-score-based-modelling/src/generalisation')
 from score_network_models import MLP_simple2
 
 from circle_metric import distance_circle, distance_simple_circle, distance_true_circle
