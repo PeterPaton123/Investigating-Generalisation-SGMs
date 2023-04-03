@@ -1,3 +1,9 @@
+# Ignore the virtual environment and build directories
 /venv
 /build
 
+# Ignore all python caches 
+**/__pycache__/**
+
+# Ignore all image files which are outcomes of experiments
+*.png
