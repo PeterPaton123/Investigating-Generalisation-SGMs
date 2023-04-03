@@ -24,8 +24,9 @@ from diffusionjax.utils import (
     retrain_nn)
 from diffusionjax.sde import OU
 
-#import sys
-#sys.path.append('/home/peter/Documents/Year-4/fyp/Numerical-methods-for-score-based-modelling/src/generalisation')
+import sys
+sys.path.append('/home/peter/Documents/Year-4/fyp/Numerical-methods-for-score-based-modelling/src/generalisation')
+from score_network_models import MLP_simple2
 
 from ellipse_metric import distance_ellipse, distance_simple_ellipse, distance_true_ellipse, inverse_transformation
 """
@@ -133,9 +134,9 @@ def main():
         plot_score(score=trained_score, t=0.01, area_min=-2, area_max=2, fname=f"bin/trained score epoch-{1000*(i+1)}")
         sampler = EulerMaruyama(sde, trained_score).get_sampler(stack_samples=False)
         q_samples = sampler(rng, n_samples=3000, shape=(N,))
-        generalisation_metric_simple[i] = distance_simple_ellipse(samples_2, q_samples)
-        generalisation_metric[i] = distance_ellipse(samples_2, q_samples)
-        generalisation_metric_true[i] = distance_true_ellipse(q_samples)
+        generalisation_metric_simple[i] = distance_simple_ellipse(samples_2, q_samples, A=A)
+        generalisation_metric[i] = distance_ellipse(samples_2, q_samples, A=A)
+        generalisation_metric_true[i] = distance_true_ellipse(q_samples, A=A)
 
         #generated_samples = jnp.append(generated_samples, q_samples, axis=0)
         #print(jnp.shape(generated_samples))
@@ -147,6 +148,7 @@ def main():
     print(f"simple: {generalisation_metric_simple}")
     print(f"metric: {generalisation_metric}")
     print(f"true: {generalisation_metric_true}")
+    print(min(enumerate(generalisation_metric_true), key=lambda x: jnp.sum(x[1])))
     #plt.plot(jnp.array(range(CONST)), jnp.exp(jnp.array(generalisation_metric_simple)), color='r', label="Simple")
     #plt.plot(jnp.array(range(CONST)), jnp.exp(jnp.array(generalisation_metric)), color='g', label="Metric")
     #plt.plot(jnp.array(range(CONST)), jnp.exp(jnp.array(generalisation_metric_true)), color='b', label="True")

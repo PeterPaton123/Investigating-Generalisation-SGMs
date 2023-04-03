@@ -39,7 +39,7 @@ class MLP_simple2(nn.Module):
     def __call__(self, x, t):
         x_shape = x.shape
         in_size = prod(x_shape[1:])
-        n_hidden = 16
+        n_hidden = 64
         t = t.reshape((t.shape[0], -1))
         x = x.reshape((x.shape[0], -1))  # flatten
         t = jnp.concatenate([t - 0.5, jnp.cos(2*jnp.pi*t)], axis=-1)
