@@ -127,37 +127,3 @@ if __name__ == "__main__":
     for model, name in zip(models, model_names):
         union_run(model, train_samples, test_samples, rng, name)
     
-    """
-    plot_samples(samples=train_samples, index=(0, 1), fname="samples_train", lims=((-2, 2), (-2, 2)))
-    plot_samples(samples=test_samples, index=(0, 1), fname="samples_test", lims=((-2, 2), (-2, 2)))
-    index = (0, 1)
-    fname="true_samples"
-    lims=((-3.5, 3.5), (-2, 2))
-    fig, ax = plt.subplots(1, 1)
-    fig.patch.set_facecolor('white')
-    fig.patch.set_alpha(1.0)
-    ax.plot(
-        true_samples_half[:, index[0]], true_samples_half[:, index[1]],
-        color='b', linestyle='--', label="Target")
-    ax.plot(
-        true_samples_half_2[:, index[0]], true_samples_half_2[:, index[1]],
-        color='b', linestyle='--')
-    ax.scatter(
-        train_samples[:, index[0]], train_samples[:, index[1]],
-        color='red', label="Train")
-    ax.scatter(
-        test_samples[:, index[0]], test_samples[:, index[1]],
-        color='green', label="Test")
-    ax.set_xlabel(r"$x_{}$".format(index[0]))
-    ax.set_ylabel(r"$x_{}$".format(index[1]))
-    ax.legend()
-    if lims is not None:
-        ax.set_xlim(lims[0])
-        ax.set_ylim(lims[1])
-    plt.gca().set_aspect('equal', adjustable='box')
-    plt.draw()
-    fig.savefig(
-        fname,
-        facecolor=fig.get_facecolor(), edgecolor='none')
-    plt.close()
-    """

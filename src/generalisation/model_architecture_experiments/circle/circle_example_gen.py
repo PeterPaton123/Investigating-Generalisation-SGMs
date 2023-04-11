@@ -98,7 +98,7 @@ def main():
 
     # Neural network training via score matching
     batch_size=16
-    score_model = MLP_simple2() # MLP_simple(num_neurons_per_layer=jnp.array([256, 256, 256]))
+    score_model = MLP_simple2()
     # Initialize parameters
     params = score_model.init(step_rng, jnp.zeros((batch_size, N)), jnp.ones((batch_size,)))
     # Initialize optimizer

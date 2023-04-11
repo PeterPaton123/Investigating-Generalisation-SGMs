@@ -32,7 +32,7 @@ def distance_simple_union(reserved_train_data, generated_samples, alpha=2):
     generated_angles = jnp.arctan2(generated[:, 1], generated[:, 0])
     reserved_radii = vmap(jnp.linalg.norm)(reserved_train_data)
     generated_radii = vmap(jnp.linalg.norm)(generated_samples)
-    return wasserstein_distance(u_values=reserved_angles, v_values=generated_angles) + alpha * wasserstein_distance(u_values=reserved_radii, v_values=generated_radii)
+    return jnp.array([wasserstein_distance(u_values=reserved_angles, v_values=generated_angles), wasserstein_distance(u_values=reserved_radii, v_values=generated_radii)])
 
 def distance_circle(reserved_train_data, generated_samples):
     """
@@ -57,7 +57,7 @@ def distance_circle(reserved_train_data, generated_samples):
     interval = vmap(radii_inverse_cdf)(cdf_interval)
     pdf_interval = vmap(radii_pdf)(interval)
 
-    return wasserstein_distance(u_values=interval, v_values=generated_radii, u_weights=pdf_interval) + wasserstein_distance(u_values=jnp.linspace(reserved_angles_min, reserved_angles_max, 50), v_values=generated_angles)
+    return jnp.array([wasserstein_distance(u_values=interval, v_values=generated_radii, u_weights=pdf_interval), wasserstein_distance(u_values=jnp.linspace(reserved_angles_min, reserved_angles_max, 50), v_values=generated_angles)])
 
 def distance_true_union(generated_samples):
     """
@@ -68,6 +68,6 @@ def distance_true_union(generated_samples):
     generated_left, generated_right = split_union(generated_samples)
     generated_left_translate, generated_right_translate = translate(generated_left, jnp.array([2, 0]), generated_right, jnp.array([-2, 0]))
     generated = jnp.vstack((generated_left_translate, generated_right_translate))
-    generated_angles = jnp.arctan2(generated[:, 1], generated[:, 0])
+    generated_angles = jnp.arctan2(generated[:, 1], generated[:, 0]) + jnp.pi
     generated_radii = vmap(jnp.linalg.norm)(generated)
-    return wasserstein_distance(generated_angles, jnp.linspace(0, 2*jnp.pi, 100)) + jnp.mean(jnp.abs(generated_radii - 1))
+    return jnp.array([wasserstein_distance(generated_angles, jnp.linspace(0, 2*jnp.pi, 100)), jnp.mean(jnp.abs(generated_radii - 1))])
