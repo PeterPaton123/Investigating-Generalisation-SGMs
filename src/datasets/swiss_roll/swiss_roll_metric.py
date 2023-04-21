@@ -8,20 +8,7 @@ from sklearn.manifold import SpectralEmbedding
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PolynomialFeatures
 
-def kernel(x, y):
-    return np.exp(-0.5 * np.linalg.norm(x - y)**2)
-
-def MMD(generated_samples, test_samples):
-    """
-    Maximum mean discrepancy
-    """
-    N = np.shape(generated_samples)[0]
-    M = np.shape(test_samples)[0]
-    return (1.0 / N)**2 * np.sum([[kernel(generated_samples[i, :], generated_samples[j, :]) for j in range(N)] for i in range(N)]) + \
-        (1.0 / M)**2 * np.sum([[kernel(test_samples[i, :], test_samples[j, :]) for j in range(M)] for i in range(M)]) + \
-        (1.0 / (N * M)) * np.sum([[kernel(generated_samples[i, :], test_samples[j, :]) for j in range(M)] for i in range(N)])
-
-class ManifoldMetric():
+class SwissRollMetric():
 
     def __init__(self, input_points, input_color, model_degree=4):
         # Data embedding
@@ -38,8 +25,9 @@ class ManifoldMetric():
         self.input_transformed = self.normalise(input_transformed)
 
         # Fit model to embedding
-        self.model = Pipeline([('poly', PolynomialFeatures(degree=model_degree)),
-                        ('linear', LinearRegression(fit_intercept=False))])
+        self.model = Pipeline([
+            ('poly', PolynomialFeatures(degree=model_degree)),
+            ('linear', LinearRegression(fit_intercept=False))])
         self.model = self.model.fit(self.input_transformed[:, 0, np.newaxis], self.input_transformed[:, 1])
 
     def normalise(self, in_data):
@@ -51,10 +39,10 @@ class ManifoldMetric():
         # Find embedding of generated samples
         generated_embedding = SpectralEmbedding(n_components=2, affinity="rbf")
         generated_transformed = generated_embedding.fit_transform(generated_samples)
-        print("Embedding found")
+        #print("Embedding found")
         # Pre-process the embedding
         generated_transformed = self.normalise(generated_transformed)
-        print("Embedding pre-processed, returning result")
+        #print("Embedding pre-processed, returning result")
         # Calculate generalisation metric on embedding
-        return 10.0 * wasserstein_distance(self.input_transformed[:, 0], generated_transformed[:, 0]), np.mean(np.abs(self.model.predict(generated_transformed[:, 0, np.newaxis]), generated_transformed[:, 1]))
+        return 10.0 * wasserstein_distance(self.input_transformed[:, 0], generated_transformed[:, 0]), 10.0 * wasserstein_distance(self.input_transformed[:, 1], generated_transformed[:, 1]), np.mean(np.abs(self.model.predict(generated_transformed[:, 0, np.newaxis]), generated_transformed[:, 1]))
     

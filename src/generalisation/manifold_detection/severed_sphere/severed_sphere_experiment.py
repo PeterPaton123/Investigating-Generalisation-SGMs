@@ -34,7 +34,7 @@ def run(rng, p_reduce):
     plot(train_samples, fname=f"{p_reduce}/train-samples", num_neighbours=25, colours=colour)
 
     score_model = MLP()
-    NUM = 15
+    NUM = 30
     num_epochs = NUM * 1000
     rng, step_rng = random.split(rng, 2)
     N = train_samples.shape[1]
@@ -73,8 +73,7 @@ def run(rng, p_reduce):
         q_samples = sampler(rng, num_samples=5_000, shape=(N,))
         generalisation_metric_severed_sphere[i] = ss_metric(q_samples, p_reduce)
         generalisation_metric_full_sphere[i] = ss_metric(q_samples, 0.0)
-        if i % 3 == 0:
-            plot(q_samples, fname=f"{p_reduce}/generated-{(i+1)*1000}", num_neighbours=25)
+        plot(q_samples, fname=f"{p_reduce}/generated-{(i+1)*1000}", num_neighbours=25)
     pd.DataFrame(generalisation_metric_severed_sphere).to_csv(f"results/severed-{p_reduce}.csv", index=None, header=None)
     pd.DataFrame(generalisation_metric_full_sphere).to_csv(f"results/full-{p_reduce}.csv", index=None, header=None)
 
