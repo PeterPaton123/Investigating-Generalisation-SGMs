@@ -8,18 +8,19 @@ from sklearn.manifold import SpectralEmbedding
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PolynomialFeatures
 
-num_samples = 5000
+num_samples = 20_000
 sr_points, sr_color = make_swiss_roll(n_samples=num_samples, random_state=0, hole=False)
-"""
+
 fig = plt.figure(figsize=(8, 6))
 ax = fig.add_subplot(111, projection="3d")
 fig.add_axes(ax)
 ax.scatter(
-    sr_points[:, 0], sr_points[:, 1], sr_points[:, 2], c=sr_color, s=50, alpha=0.8
+    sr_points[:, 0], sr_points[:, 1], sr_points[:, 2], c=sr_color, s=10, alpha=0.7
 )
 ax.set_title("Swiss Roll in Ambient Space")
 ax.view_init(azim=-66, elev=12)
-
+fig.savefig("swiss_roll.png")
+quit()
 sr_lle, sr_err = manifold.locally_linear_embedding(
     sr_points, n_neighbors=12, n_components=2
 )
@@ -35,7 +36,7 @@ axs[1].scatter(sr_tsne[:, 0], sr_tsne[:, 1], c=sr_color)
 _ = axs[1].set_title("t-SNE Embedding of Swiss Roll")
 
 plt.show()
-"""
+
 embedding = SpectralEmbedding(n_components=2, affinity="rbf")
 X_transformed = embedding.fit_transform(sr_points)
 
