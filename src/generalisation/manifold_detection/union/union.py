@@ -97,7 +97,7 @@ if __name__ == "__main__":
     samples_half_2 = sample_circle_filled(1500, sample_rng, x0=2, y0=0)
     train_samples = jnp.vstack((samples_half, samples_half_2))
     
-    union_run(MLP(), train_samples, rng)
+    union_run(MLP3L16N(), train_samples, rng)
     """
     index = (0, 1)
     fname="true_samples"

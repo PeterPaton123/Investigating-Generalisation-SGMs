@@ -60,8 +60,8 @@ class GAN():
     def train(self, training_samples, num_epochs=1000):
         # Define loss functions
         criterion = nn.BCEWithLogitsLoss()
-        generator_optimizer = optim.Adam(self.generator.parameters(), lr=0.001)
-        discriminator_optimizer = optim.Adam(self.discriminator.parameters(), lr=0.001)
+        generator_optimizer = optim.Adam(self.generator.parameters(), lr=0.0001)
+        discriminator_optimizer = optim.Adam(self.discriminator.parameters(), lr=0.0001)
 
         for epoch in range(num_epochs):
 

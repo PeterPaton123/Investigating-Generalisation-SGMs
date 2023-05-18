@@ -34,14 +34,14 @@ samples_half_2 = sample_circle_filled(10_000, sample_rng, x0=2, y0=0)
 samples_union = np.vstack((samples_half, samples_half_2))
 
 sinusoidal_gan = GAN()
-filled_circle_gan = GAN()
-union_gan = GAN()
+#filled_circle_gan = GAN()
+#union_gan = GAN()
 
 sinusoidal_gan.train(samples_half, num_epochs=3_000)
 sinusoidal_gan.generate_samples(num_samples=200, fname="bin/sinusoidal_generated_samples.png")
 
-filled_circle_gan.train(samples_half_2)
-union_gan.train(samples_union)
+#filled_circle_gan.train(samples_half_2)
+#union_gan.train(samples_union)
 
-filled_circle_gan.generate_samples(num_samples=200, fname="bin/filled_circle_generated_samples.png")
-union_gan.generate_samples(num_samples=200, fname="bin/union_generated_samples.png")
+#filled_circle_gan.generate_samples(num_samples=200, fname="bin/filled_circle_generated_samples.png")
+#union_gan.generate_samples(num_samples=200, fname="bin/union_generated_samples.png")

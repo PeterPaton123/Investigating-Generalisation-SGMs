@@ -10,7 +10,7 @@ from sklearn.preprocessing import PolynomialFeatures
 
 class SwissRollMetric():
 
-    def __init__(self, input_points, input_color, model_degree=4):
+    def __init__(self, input_points, model_degree=4):
         # Data embedding
         self.embedding = SpectralEmbedding(n_components=2, affinity="rbf")
         input_transformed = self.embedding.fit_transform(input_points)
@@ -39,10 +39,9 @@ class SwissRollMetric():
         # Find embedding of generated samples
         generated_embedding = SpectralEmbedding(n_components=2, affinity="rbf")
         generated_transformed = generated_embedding.fit_transform(generated_samples)
-        #print("Embedding found")
         # Pre-process the embedding
         generated_transformed = self.normalise(generated_transformed)
         #print("Embedding pre-processed, returning result")
         # Calculate generalisation metric on embedding
         return 10.0 * wasserstein_distance(self.input_transformed[:, 0], generated_transformed[:, 0]), 10.0 * wasserstein_distance(self.input_transformed[:, 1], generated_transformed[:, 1]), np.mean(np.abs(self.model.predict(generated_transformed[:, 0, np.newaxis]), generated_transformed[:, 1]))
-    
+

@@ -12,12 +12,12 @@ ys = jnp.sin(t_samples) * jnp.sin(p_samples)
 zs = jnp.cos(t_samples)
 """
 
-def ss_metric(generated_samples, p_reduce):
+def ss_metric(generated_samples, p_reduce, t_reduce=jnp.pi/9):
     """
     Generalisation metric for the severed sphere compares the sampled values after transformation as trigonometric functions are not 1 to 1
     """
     p_true = np.linspace(start=0, stop=2*jnp.pi - p_reduce, num=10_000)
-    t_true = np.linspace(start = jnp.pi / 8, stop = (jnp.pi - (jnp.pi / 8)), num=10_000)
+    t_true = np.linspace(start = t_reduce, stop = (jnp.pi - t_reduce), num=10_000)
 
     #wasserstein_distance(generated_samples[:, 1] / generated_samples[:, 0], jnp.tan(p_true))
     return wasserstein_distance(jnp.sin(t_true) * jnp.cos(p_true), generated_samples[:, 0]), wasserstein_distance(jnp.sin(t_true) * jnp.sin(p_true), generated_samples[:, 1]), wasserstein_distance(jnp.cos(t_true), generated_samples[:, 2])
