@@ -4,6 +4,7 @@ from jax import vmap
 import jax.random as random
 import matplotlib.pyplot as plt
 import pandas as pd
+from scipy.stats import multivariate_normal, norm, wasserstein_distance
 
 class GMM:
     """
@@ -33,3 +34,30 @@ class GMM:
             on_going_count += count
         return mixture_samples
     
+    def pdf(self, x):
+        res = np.zeros(x.shape[0])
+        for i in range(self.n_components):
+            res += multivariate_normal.pdf(x, mean=self.mus[i], cov=self.cholensky_decompositions[i]@(self.cholensky_decompositions[i]).T) * (1.0 / self.n_components)
+        return res
+    
+    def one_dim_xs(self):
+        N = 50
+        xs = np.empty(N * self.n_components)
+        for i in range(self.n_components):
+            us = np.linspace(0.005, 0.995, N)
+            xs[i*N:(i+1)*N] = norm.ppf(us, loc=self.mus[i], scale=self.cholensky_decompositions[i])
+        return xs
+    
+    """
+    One dimensional distance
+    """
+    def one_dimensional_wasserstein(self, generated_samples):
+        return wasserstein_distance(u_values=self.one_dim_xs(), v_values=generated_samples, u_weights=self.pdf(self.one_dim_xs()))
+    
+if __name__ == '__main__':
+    mus = jnp.array([[-5.], [5.]])
+    covars = jnp.array([np.eye(1), np.eye(1)])
+    gmm = GMM(mus, covars)
+    plt.hist(gmm.sample(300), bins=50, color = np.repeat('b', 300), stacked=True, density=True)
+    plt.plot(gmm.one_dim_xs(), gmm.pdf(gmm.one_dim_xs()), c='r', linestyle='--')
+    plt.show()
