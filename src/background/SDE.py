@@ -61,6 +61,5 @@ class SDE():
 
     def step_up_to_T(self, T : float):
         t0 = self.T
-        for i in range(0, int((T - t0) / self.dt)):
-            print(i)
+        for _t in range(0, int((T - t0) / self.dt)):
             self.step_euler_maruyama()
