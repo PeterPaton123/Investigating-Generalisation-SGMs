@@ -4,7 +4,7 @@ This repository contains the code and libraries created and used in supporting e
 Many experiments require building the diffusion jax library which is included as a git submodule.
 
 ## Requirements
-1. Install Python3.10+
+1. Install Python3.10+ 
 
 ## Setup
 1. Check out the repo and the submodules: `git clone --recurse-submodules git@github.com:PeterPaton123/High-Performance-Numerical-Differential-Equation-Solver.git`
