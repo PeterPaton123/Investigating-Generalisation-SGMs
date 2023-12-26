@@ -7,7 +7,7 @@ Many experiments require building the diffusion jax library which is included as
 1. Install Python3.10+ 
 
 ## Setup
-1. Check out the repo and the submodules: `git clone --recurse-submodules git@github.com:PeterPaton123/High-Performance-Numerical-Differential-Equation-Solver.git`
+1. Check out the repo and the submodules: `git clone --recurse-submodules git@github.com:PeterPaton123/Investigating-Generalisation-SGMs.git`
 2. Build the DiffisionJax submodule as detailed in the submodule README.md 
 3. Set up a virtual environment for python libraries: `python3 -m venv .`
 4. Install those python libraries: `pip install -r requirements.txt`
